@@ -14,6 +14,8 @@ class Resources {
             exit: "public/sprites/Exit.png",
             cave: "public/sprites/Cave.png",
             caveGround: "public/sprites/Cave-Ground.png",
+            // NPCs
+            knight: "/public/sprites/Knight-Sheet.png",
         };
 
         // A bucket to keep all of our images

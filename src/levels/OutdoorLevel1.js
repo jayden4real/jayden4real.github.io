@@ -3,6 +3,7 @@ import { gridCells } from "../helpers/grid.js";
 import { Exit } from "../objects/Exit/Exit.js";
 import { Hero } from "../objects/Hero/Hero.js";
 import { Level } from "../objects/Level/Level.js";
+import { Npc } from "../objects/NPC/Npc.js";
 import { Rod } from "../objects/Rod/Rod.js";
 import { resources } from "../Resource.js";
 import { Sprite } from "../Sprite.js";
@@ -49,6 +50,9 @@ export class OutdoorLevel1 extends Level {
         const rod = new Rod(gridCells(7), gridCells(6))
         this.addChild(rod);
 
+        const npc = new Npc(gridCells(5), gridCells(5))
+        this.addChild(npc);
+        
         this.walls = new Set();
 
         this.walls.add(`48,32`); // tree
