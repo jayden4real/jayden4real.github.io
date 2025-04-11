@@ -15,7 +15,10 @@ class Resources {
             cave: "public/sprites/Cave.png",
             caveGround: "public/sprites/Cave-Ground.png",
             // NPCs
-            knight: "/public/sprites/Knight-Sheet.png",
+            knight: "public/sprites/Knight-Sheet.png",
+            // HUD
+            textBox: "public/sprites/Text-Box.png",
+            fontWhite: "public/sprites/Sprite-Font-White.png",
         };
 
         // A bucket to keep all of our images

@@ -9,6 +9,7 @@ import { FrameIndexPattern } from "../../FrameIndexPattern.js";
 import { WALK_UP, WALK_DOWN, WALK_LEFT, WALK_RIGHT, STAND_DOWN, STAND_LEFT, STAND_UP, STAND_RIGHT, PICK_UP_DOWN } from "./heroAnimations.js";
 import { moveTowards } from "../../helpers/moveTowards.js";
 import { events } from "../../Events.js";
+import { Input } from "../../Input.js";
 
 export class Hero extends GameObject {
     constructor(x, y) {
@@ -48,6 +49,7 @@ export class Hero extends GameObject {
         this.destinationPosition = this.position.duplicate();
         this.itemPickupTime = 0;
         this.itemPickupShell = null;
+        this.isLocked = false;
 
         // React to picking up an item
         events.on("HERO_PICKS_UP_ITEM", this, data => {
@@ -56,11 +58,33 @@ export class Hero extends GameObject {
 
     }
 
+    ready() {
+        events.on("START_TEXT_BOX", this, () => {
+            this.isLocked = true;
+        })
+        events.on("END_TEXT_BOX", this, () => {
+            this.isLocked = false;
+        })
+    }
+
     step(delta, root) {
 
+        // Don't do anything when locked
+        if (this.isLocked) {
+            return;
+        }
+
+        // Lock movement if celebrating an item pickup
         if(this.itemPickupTime > 0) {
             this.workOnItemPickup(delta);
             return;
+        }
+
+        // Check for input
+        /** @type {Input} */
+        const input = root.input;
+        if (input?.getActionJustPressed("Space")) {
+            events.emit("HERO_REQUESTS_ACTION");
         }
 
         const distance = moveTowards(this, this.destinationPosition, 1)
@@ -119,7 +143,11 @@ export class Hero extends GameObject {
         this.facingDirection = input.direction ?? this.facingDirection;
     
         // Validating that the next destination is free
-        if(isSpaceFree(root.level?.walls, nextX, nextY)) {
+        const spaceIsFree = isSpaceFree(root.level?.walls, nextX, nextY);
+        const solidBodyAtSpace = this.parent.children.find(c => {
+            return c.isSolid && c.position.x === nextX && c.position.y === nextY
+        })
+        if(spaceIsFree && !solidBodyAtSpace) {
             this.destinationPosition.x = nextX;
             this.destinationPosition.y = nextY;
         }

@@ -7,8 +7,13 @@ export class Input {
     constructor() {
 
         this.heldDirections = [];
+        this.keys = {};
+        this.lastKeys = {};
 
         document.addEventListener("keydown", (e) => {
+
+            this.keys[e.code] = true;
+
             // Also check for dedicated direction list
             if(e.code === "ArrowUp" || e.code === "keyW") {
                 this.onArrowPressed(UP);
@@ -25,6 +30,9 @@ export class Input {
         })
 
         document.addEventListener("keyup", (e) => {
+
+            this.keys[e.code] = false;
+
             // Also check for dedicated direction list
             if(e.code === "ArrowUp" || e.code === "keyW") {
                 this.onArrowReleased(UP);
@@ -43,6 +51,19 @@ export class Input {
 
     get direction() {
         return this.heldDirections[0];
+    }
+
+    update() {
+        // Diff the keys on previous frame to know when new ones are pressed
+        this.lastKeys = {...this.keys};
+    }
+
+    getActionJustPressed(keyCode) {
+        let justPressed = false;
+        if (this.keys[keyCode] && !this.lastKeys[keyCode]) {
+            justPressed = true;
+        }
+        return justPressed;
     }
 
     onArrowPressed(direction) {

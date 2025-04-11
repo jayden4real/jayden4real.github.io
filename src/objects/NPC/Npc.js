@@ -9,8 +9,11 @@ export class Npc extends GameObject {
             position: new Vector2(x, y)
         });
 
+        // Opt into being solid
+        this.isSolid = true;
+
         // Shadow under feet
-        const shadow = new SpeechRecognitionResult({
+        const shadow = new Sprite({
             resource: resources.images.shadow,
             frameSize: new Vector2(32, 32),
             position: new Vector2(-8, -19),
