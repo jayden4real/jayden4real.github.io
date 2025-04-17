@@ -4,11 +4,12 @@ const width = new Map();
 
 // Add overrides as needed
 width.set("c", 4);
-width.set("f", 4);
-width.set("i", 2);
+width.set("f", 5);
+width.set("i", 1);
 width.set("j", 4);
 width.set("l", 3);
 width.set("n", 4);
+width.set("s", 6);
 
 width.set("r", 4);
 width.set("t", 4);

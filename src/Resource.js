@@ -19,6 +19,7 @@ class Resources {
             // HUD
             textBox: "public/sprites/Text-Box.png",
             fontWhite: "public/sprites/Sprite-Font-White.png",
+            portraits: "public/sprites/tempportraits-sheet.png",
         };
 
         // A bucket to keep all of our images

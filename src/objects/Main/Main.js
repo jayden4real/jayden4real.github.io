@@ -2,6 +2,7 @@ import { Camera } from "../../Camera.js";
 import { events } from "../../Events.js";
 import { GameObject } from "../../GameObject.js";
 import { Input } from "../../Input.js";
+import { storyFlags } from "../../StoryFlags.js";
 import { Inventory } from "../Inventory/Inventory.js";
 import { SpriteTextString } from "../SpriteTextString/SpriteTextString.js";
 
@@ -24,13 +25,35 @@ export class Main extends GameObject {
         })
 
         // Launch Text Box handler
-        events.on("HERO_REQUESTS_ACTION", this, () => {
+        events.on("HERO_REQUESTS_ACTION", this, (withObject) => {
 
-            const textbox = new SpriteTextString("Hello, friend!");
-            this.addChild(textbox);
-            events.emit("START_TEXT_BOX")
+            if (typeof withObject.getContent === "function") {
+                const content = withObject.getContent();
 
+                if (!content) {
+                    return;
+                }
+
+                // Potentially add a story flag
+                if (content.addsFlag) {
+                    console.log("ADD FLAG", content.addsFlag)
+                    storyFlags.add(content.addsFlag);
+                }
+
+                const textbox = new SpriteTextString({
+                    portraitFrame: content.portraitFrame,
+                    string: content.string
+                });
+                this.addChild(textbox);
+                events.emit("START_TEXT_BOX")
+    
+                const endingSub = events.on("END_TEXT_BOX", this, () => {
+                    textbox.destroy();
+                    events.off(endingSub)
+                })
+            }
         })
+        
     }
 
     setLevel(newLevelInstance) {
