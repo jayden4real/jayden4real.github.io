@@ -2,15 +2,20 @@ import { GameObject } from "../../GameObject.js";
 import { Vector2 } from "../../Vector2.js";
 import { resources } from "../../Resource.js";
 import { Sprite } from "../../Sprite.js"
+import { storyFlags } from "../../StoryFlags.js";
 
 export class Npc extends GameObject {
-    constructor(x, y) {
+    constructor(x, y, textConfig={}) {
         super({
             position: new Vector2(x, y)
         });
 
         // Opt into being solid
         this.isSolid = true;
+
+        // Say something when talking
+        this.textContent = textConfig.content;
+        this.textPortraitFrame = textConfig.portraitFrame;
 
         // Shadow under feet
         const shadow = new Sprite({
@@ -29,7 +34,21 @@ export class Npc extends GameObject {
             position: new Vector2(-8, -20),
         })
         this.addChild(body);
-
-
     }
+
+    getContent() {
+
+        const match = storyFlags.getRelevantScenario(this.textContent);
+        if (!match) {
+            console.warn("No matches found in this list!", this.textContent);
+            return null;
+        }
+
+        return {
+            portraitFrame: this.textPortraitFrame,
+            string: match.string,
+            addsFlag: match.addsFlag ?? null
+        }
+    }
+
 }

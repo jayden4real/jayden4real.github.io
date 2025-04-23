@@ -7,16 +7,16 @@ import { Vector2 } from "../../Vector2.js";
 import { getCharacterFrame, getCharacterWidth } from "./spriteFontMap.js";
 
 export class SpriteTextString extends GameObject {
-    constructor(str) {
+    constructor(config={}) {
         super({
             position: new Vector2(32, 108)
         });
 
+        // Draw on top layer
         this.drawLayer = "HUD";
 
-        const content = str ?? "Default Text";
-
         // Create an array of words (because it helps with line wrapping later)
+        const content = config.string ?? "Default Text";
         this.words = content.split(" ").map(word => {
 
             // We need to know how wide this word is
@@ -53,6 +53,13 @@ export class SpriteTextString extends GameObject {
             frameSize: new Vector2(256, 64)
         })
 
+        // Create a portrait
+        this.portrait = new Sprite({
+            resource: resources.images.portraits,
+            hFrames: 4,
+            frame: config.portraitFrame ?? 0
+        })
+
         // Typewriter effect
         this.showingIndex = 0;
         this.finalIndex = this.words.reduce((acc, word) => acc + word.chars.length, 0)
@@ -61,7 +68,7 @@ export class SpriteTextString extends GameObject {
 
     }
 
-    step(delta, root ) {
+    step(delta, root) {
 
         // Listen for user Input
         /** @type {Input} */
@@ -77,6 +84,7 @@ export class SpriteTextString extends GameObject {
             events.emit("END_TEXT_BOX");
         }
 
+        // Work on typewriter
         this.timeUntilNextShow -= delta;
         if (this.timeUntilNextShow <= 0) {
             // Increase amount of characters that are drawn
@@ -91,9 +99,12 @@ export class SpriteTextString extends GameObject {
         // Draw the backdrop
         this.backdrop.drawImage(ctx, drawPosX, drawPosY)
 
+        // Draw the portrait
+        this.portrait.drawImage(ctx, drawPosX+6, drawPosY+6);
+
         // Configuration options
-        const PADDING_LEFT = 7;
-        const PADDING_TOP = 7;
+        const PADDING_LEFT = 27;
+        const PADDING_TOP = 9;
         const LINE_WIDTH_MAX = 240;
         const LINE_VERTICAL_HEIGHT = 14;
 
